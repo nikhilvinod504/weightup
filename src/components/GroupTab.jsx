@@ -3,6 +3,7 @@ import { P, T, A, C } from '../utils/constants.js'
 import { CHALLENGES } from '../utils/constants.js'
 import * as api from '../utils/api.js'
 import { Avatar, Modal, Btn, inputStyle } from './UI.jsx'
+import GroupStats from './GroupStats.jsx'
 
 function CreateGroupModal({ onCreated, onClose }) {
   const [name, setName] = useState("")
@@ -202,7 +203,7 @@ export default function GroupTab({ user, groups, activeGroup, setActiveGroup, se
     showToast("Invite code copied! 📋")
   }
 
-  const SUB_TABS = [{id:"chat",label:"💬 Chat"},{id:"leaderboard",label:"🏆 Board"},{id:"challenges",label:"⚡ Challenges"}]
+  const SUB_TABS = [{id:"chat",label:"💬 Chat"},{id:"leaderboard",label:"🏆 Board"},{id:"challenges",label:"⚡ Challenges"},{id:"stats",label:"📊 Stats"}]
 
   return (
     <div>
@@ -254,7 +255,8 @@ export default function GroupTab({ user, groups, activeGroup, setActiveGroup, se
 
           {activeGroup&&subTab==="chat"        &&<Chat group={activeGroup} currentUsername={user.username} onGroupUpdate={handleGroupUpdate}/>}
           {activeGroup&&subTab==="leaderboard" &&<Leaderboard group={activeGroup} currentUsername={user.username}/>}
-          {subTab==="challenges"               &&<ChallengesPanel activeChallenge={activeChallenge} completedChallenges={completedChallenges} onStart={onStartChallenge}/>}
+          {subTab==="challenges" &&<ChallengesPanel activeChallenge={activeChallenge} completedChallenges={completedChallenges} onStart={onStartChallenge}/>}
+          {activeGroup&&subTab==="stats" &&<GroupStats group={activeGroup}/>}
         </>
       )}
     </div>
