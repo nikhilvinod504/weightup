@@ -80,3 +80,5 @@ export function getGroup(id)          { return get(`/api/groups/${encodeURICompo
 export function sendMessage(gid, text){ return post(`/api/groups/${encodeURIComponent(gid)}/messages`, { text }) }
 export function giveKudos(gid, msgId) { return post(`/api/groups/${encodeURIComponent(gid)}/kudos`, { msgId }) }
 export function getMemberStats(gid)   { return get(`/api/groups/${encodeURIComponent(gid)}/members-stats`) }
+
+export function getGroupMembersData(gid) { return get(`/api/groups/${encodeURIComponent(gid)}/members-data`) }

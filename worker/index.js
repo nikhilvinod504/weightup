@@ -391,6 +391,22 @@ export default {
       return json(stats)
     }
 
+    // ── Groups: full member data for stats charts ───────────────────────────
+    const memberDataMatch = path.match(/^\/api\/groups\/([^/]+)\/members-data$/)
+    if (memberDataMatch && method === "GET") {
+      const gid   = decodeURIComponent(memberDataMatch[1])
+      const group = await env.WEIGHTUP_KV.get(gid, "json")
+      if (!group) return err("Group not found", 404)
+      const data = await Promise.all(
+        group.members.map(async m => {
+          const logs  = (await env.WEIGHTUP_KV.get(`logs:${m.username}`, "json")) || []
+          const goalD = await env.WEIGHTUP_KV.get(`goal:${m.username}`, "json")
+          return { username: m.username, name: m.name, logs, goal: goalD?.w || null }
+        })
+      )
+      return json(data)
+    }
+
     return err("Not found", 404)
   },
 }
