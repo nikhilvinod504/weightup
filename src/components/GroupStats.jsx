@@ -19,7 +19,7 @@ function computeStats(rawMembers) {
     const goalPct   = goal && first && first > goal
       ? Math.min(100, Math.max(0, Math.round((lost / (first - goal)) * 100))) : 0
 
-    const weekAgoStr = (() => { const d = new Date(); d.setDate(d.getDate()-7); return d.toISOString().split("T")[0] })()
+    const weekAgoStr = (() => { const d = new Date(); d.setDate(d.getDate()-7); const y=d.getFullYear(),m=String(d.getMonth()+1).padStart(2,"0"),day=String(d.getDate()).padStart(2,"0"); return `${y}-${m}-${day}` })()
     const weekLogs   = logs.filter(l => l.d >= weekAgoStr)
     const weekChange = weekLogs.length >= 2
       ? +(weekLogs[0].w - weekLogs[weekLogs.length-1].w).toFixed(1) : 0
@@ -157,12 +157,18 @@ function RaceTrack({ members }) {
   )
 }
 
+// local date helper — avoids UTC offset shifting the date
+const localStr = d => {
+  const y = d.getFullYear(), m = String(d.getMonth()+1).padStart(2,"0"), day = String(d.getDate()).padStart(2,"0")
+  return `${y}-${m}-${day}`
+}
+const daysAgo = n => { const d = new Date(); d.setDate(d.getDate()-n); return d }
+
 // ── 4. Consistency heatmap ────────────────────────────────────────────────────
 function HeatmapRow({ member }) {
   const days = []
   for (let i=29; i>=0; i--) {
-    const d = new Date(); d.setDate(d.getDate()-i)
-    const str = d.toISOString().split("T")[0]
+    const str = localStr(daysAgo(i))
     days.push({ str, logged: member.logDates.has(str) })
   }
   return (
@@ -215,8 +221,7 @@ function WeeklyBars({ members }) {
   const barW = Math.max(2, Math.floor((barGroupW-4)/members.length))
 
   const dayData = Array.from({length:7}, (_,i) => {
-    const d = new Date(); d.setDate(d.getDate()-6+i)
-    const str = d.toISOString().split("T")[0]
+    const str = localStr(daysAgo(6-i))
     return members.map(m => m.logs.find(l=>l.d===str)?.w || null)
   })
 

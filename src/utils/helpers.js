@@ -1,6 +1,11 @@
 import { LEVELS, ALL_BADGES } from './constants.js'
 
-export const today = () => new Date().toISOString().split("T")[0]
+// Use local date (not UTC) so date matches user's timezone (e.g. IST)
+export const today = () => {
+  const d = new Date()
+  const y = d.getFullYear(), m = String(d.getMonth()+1).padStart(2,"0"), day = String(d.getDate()).padStart(2,"0")
+  return `${y}-${m}-${day}`
+}
 
 export const initials = name =>
   (name || "?").split(" ").map(w => w[0]).join("").slice(0, 2).toUpperCase()
