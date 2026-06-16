@@ -156,9 +156,9 @@ function HeatmapRow({ member }) {
         {member.name.split(" ")[0]}
         <span style={{ fontSize:10, color:"#bbb", fontWeight:400, marginLeft:6 }}>{days.filter(d=>d.logged).length}/30 days</span>
       </div>
-      <div style={{ display:"flex", gap:3, flexWrap:"wrap" }}>
+      <div style={{ display:"grid", gridTemplateColumns:"repeat(30, 1fr)", gap:2 }}>
         {days.map((d,i) => (
-          <div key={i} title={d.str} style={{ width:11, height:11, borderRadius:2, background:d.logged?member.color:"#efefef" }}/>
+          <div key={i} title={d.str} style={{ aspectRatio:"1", borderRadius:2, background:d.logged?member.color:"#efefef" }}/>
         ))}
       </div>
     </div>
@@ -220,7 +220,7 @@ function WeeklyBars({ members }) {
             return (
               <g key={`${di}-${mi}`}>
                 <rect x={x} y={H-16-bh} width={barW-1} height={bh} fill={members[mi].color} rx="2" opacity="0.85"/>
-                {bh > 18 && <text x={x+(barW-1)/2} y={H-18-bh} fontSize="7" fill={members[mi].color} textAnchor="middle">{v}</text>}
+                <text x={x+(barW-1)/2} y={H-18-bh} fontSize="7" fill={members[mi].color} textAnchor="middle">{v}</text>
               </g>
             )
           })
