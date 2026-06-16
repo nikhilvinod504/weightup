@@ -1,11 +1,12 @@
 import { LEVELS, ALL_BADGES } from './constants.js'
 
-// Use local date (not UTC) so date matches user's timezone (e.g. IST)
+// Use local date components to avoid UTC offset issues (e.g. IST = UTC+5:30)
 export const today = () => {
   const d = new Date()
-  const y = d.getFullYear(), m = String(d.getMonth()+1).padStart(2,"0"), day = String(d.getDate()).padStart(2,"0")
-  return `${y}-${m}-${day}`
+  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`
 }
+
+const localStr = d => `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`
 
 export const initials = name =>
   (name || "?").split(" ").map(w => w[0]).join("").slice(0, 2).toUpperCase()
@@ -22,10 +23,12 @@ export function calcStreak(logs) {
   if (!logs.length) return 0
   const dates = [...new Set(logs.map(l => l.d))].sort().reverse()
   let streak = 0
-  let cur = new Date(today())
+  let cur = new Date()
+  cur.setHours(0,0,0,0)
   for (const dt of dates) {
-    const diff = Math.round((cur - new Date(dt)) / 86400000)
-    if (diff <= 1) { streak++; cur = new Date(dt) }
+    const logDate = new Date(dt + "T00:00:00")
+    const diff = Math.round((cur - logDate) / 86400000)
+    if (diff <= 1) { streak++; cur = logDate }
     else break
   }
   return streak
@@ -67,7 +70,7 @@ export function aiInsight(logs) {
   if (logs.length < 7) return null
   const byDay = {}
   logs.forEach(l => {
-    const d = new Date(l.d).getDay()
+    const d = new Date(l.d + "T00:00:00").getDay()
     if (!byDay[d]) byDay[d] = { s: 0, n: 0 }
     byDay[d].s += l.w; byDay[d].n++
   })
